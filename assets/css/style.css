@@ -4,6 +4,15 @@
 	box-sizing: border-box;
 	font-family: 'Arial', sans-serif;
 }
+@keyframes rolagemDoTitulo{
+	0%{margin-left: -30vw;},
+	25%{
+		margin-left: -50vw;
+	},
+	50%{margin-left: -70;},
+	75%{margin-left: -80vw;},
+	100%{margin-left: -90vw;}
+}
 body{
 	background-color: #faf9fe;
 }
@@ -60,10 +69,18 @@ body{
 	object-fit: cover;
 }
 
-.audio-details h4{
+.audio-title{
+	width: 300px;
+	overflow: hidden;
+}
+.audio-title h4{
 	font-size: 1rem;
 	color: #747474;
 	text-align: center;
+	width: 90vw;
+	animation-name: rolagemDoTitulo;
+	animation-duration: 7s;
+	animation-iteration-count: infinite;
 }
 .audio-velocity{
 	display: flex;
@@ -88,8 +105,37 @@ body{
 	color: #7e7a93;
 }
 .audio-author{
-	text-align: center;
+	margin-left: 45px;
 	color: #7f7f7f;
 	font-size: 1.1rem;
 	font-weight: bold;
+}
+.trajectory{
+	display: flex;
+	align-items: center;
+	margin:auto;
+	margin-top: 10px;
+	width: 280px;
+	height: 4px;
+	background-color: #c7c6cb;
+	border-radius: 2px;
+}
+.trajectory-inner{
+	width: 50%;
+	background-color: #7468b0;
+	height: inherit;
+}
+.trajectory-ball{
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: #7468b0;
+}
+.minutes{
+	margin:8px auto 0 auto;
+	width: 280px;
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.8rem;
+	color: #acacac;
 }
