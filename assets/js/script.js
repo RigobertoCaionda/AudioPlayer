@@ -12,6 +12,12 @@ let audioTitle = document.querySelector('.audio-title h4');
 let audioAuthor = document.querySelector('.audio-author');
 let playButton = document.querySelector('.play-button');
 let randomButton = document.querySelector('.random-button');
+let minutosPercorridos = document.querySelector('.minutes-covered');
+let minutosFaltando = document.querySelector('.minutes-left');
+let goNext = document.querySelector('.goNext-button');
+let goBack = document.querySelector('.goBack-button');
+let repeatButton =document.querySelector('.repeat-button');
+let proximaFaixa = document.querySelector('.nextSong');
 let tocandoPausado = 0;
 let key;
 let position;
@@ -56,6 +62,15 @@ musicas.map((item, index)=>{
 		audio.src = musicas[key].songUrl;
 		audio.play();
 		tocandoPausado = 1;
+		if(!repeatButton.querySelector('i').classList.contains('aleatorio')
+		 && !randomButton.querySelector('i').classList.contains('aleatorio')){
+
+			if(musicas[parseInt(key)+1] !== undefined){
+					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[parseInt(key)+1].title}`;
+				}else{
+					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[0].title}`;
+				}
+		}
 	});
 
 
@@ -132,23 +147,64 @@ document.addEventListener('click',(e)=>{
 		velocityOptions.style.display = 'none';
 	}
 });
+	goNext.addEventListener('click',()=>{
+		if(tocandoPausado == 1 || tocandoPausado == 2){
+			nextSong();
+		}
+	});
+	goBack.addEventListener('click',()=>{
+		if(tocandoPausado == 1 || tocandoPausado == 2){
+			prevSong();
+		}
+	});
 let trajectoryInner = document.querySelector('.trajectory-inner');
 	audio.addEventListener('timeupdate',(e)=>{
 	 		const {duration, currentTime} = e.target;
 	 		let porcentagem = ((currentTime / duration) * 100);
 	 		trajectoryInner.style.width = `${porcentagem}%`;
+	 		let s = parseInt(currentTime % 60);
+	 		if(s < 10){
+	 			s = `0${s}`;
+	 		}
+	 		let m =  parseInt((currentTime / 60) % 60);
+	 		minutosPercorridos.innerHTML = `${m}:${s}`;
+	 		let minutesLeft = duration - currentTime;
+	 		let sMinLeft = parseInt(minutesLeft % 60);
+	 		if(sMinLeft < 10){
+	 			sMinLeft = `0${sMinLeft}`;
+	 		}
+	 		let mMinLeft = parseInt((minutesLeft / 60) % 60);
+	 		minutosFaltando.innerHTML = `-${mMinLeft}:${sMinLeft}`;
 	 	});
 
 	audio.addEventListener('ended',()=>{
-		pause.style.display = 'none';
-		playButton.style.display = 'block';
-		nextSong();
+		if(repeatButton.querySelector('i').classList.contains('aleatorio')){
+			this.currentTime = 0;
+			audio.play();
+		}else{
+			pause.style.display = 'none';
+			playButton.style.display = 'block';
+			nextSong();
+		}
 	});
 	randomButton.addEventListener('click',()=>{
 		if(randomButton.querySelector('i').classList.contains('aleatorio')){
 			randomButton.querySelector('i').classList.remove('aleatorio');
 		}else{
 			randomButton.querySelector('i').classList.add('aleatorio');
+			proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> não definido`;
+		}
+	});
+	repeatButton.addEventListener('click',()=>{
+		if(repeatButton.querySelector('i').classList.contains('aleatorio')){
+			repeatButton.querySelector('i').classList.remove('aleatorio');
+		}else{
+			repeatButton.querySelector('i').classList.add('aleatorio');
+			if(key !== undefined){
+				proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[key].title}`;
+			}else{
+				proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> não definido`;
+			}
 		}
 	});
 /*FUNCOES*/
@@ -187,7 +243,6 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 	 			key = 0;
 	 		}else{
 	 			key++;
-	 			console.log(key);
 	 		}
 	 		keyMaisUmExiste = key;
 	 		audio.src = musicas[key].songUrl;
@@ -217,6 +272,53 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 				tocandoPausado = 1;
 			});
 			});
+				if(musicas[key+1] !== undefined){
+					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[key+1].title}`;
+				}else{
+					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[0].title}`;
+				}
+				
 	 	}
+	 }
+
+ function prevSong(){
+	 		if(key <= 0){
+	 			key = musicas.length-1;
+	 		}else{
+	 			key--;
+	 		}
+	 		keyMaisUmExiste = key;
+	 		audio.src = musicas[key].songUrl;
+	 		audioTitle.innerHTML = musicas[key].title;
+	 		audioAuthor.innerHTML = musicas[key].author;
+	 		audio.play();
+	 		tocandoPausado = 1;
+	 		pause.style.display = 'block';
+			playButton.style.display = 'none';
+			document.querySelectorAll('.musica-conjunto').forEach((item)=>{
+				item.classList.remove('musicaTocando');
+				item.querySelector('.audio-pause-button').style.display = 'none';
+				item.querySelector('.audio-play-button').style.display = 'none';
+			});	
+			document.querySelectorAll('.musica-conjunto')[key+1].classList.add('musicaTocando');
+			document.querySelectorAll('.musica-conjunto')[key+1].querySelector('.audio-pause-button').style.display = 'block';
+			document.querySelectorAll('.musica-conjunto')[key+1].querySelector('.audio-play-button').style.display = 'none';
+				document.querySelectorAll('.musica-conjunto')[key+1].querySelector('.audio-pause-button').addEventListener('click',()=>{
+				audio.pause();
+				tocandoPausado = 2;
+				document.querySelectorAll('.musica-conjunto')[key+1].querySelector('.audio-pause-button').style.display = 'none';
+				document.querySelectorAll('.musica-conjunto')[key+1].querySelector('.audio-play-button').style.display = 'block';
+				document.querySelectorAll('.musica-conjunto')[key+1].querySelector('.audio-play-button').addEventListener('click',()=>{
+				document.querySelectorAll('.musica-conjunto')[key+1].querySelector('.audio-pause-button').style.display = 'block';
+				document.querySelectorAll('.musica-conjunto')[key+1].querySelector('.audio-play-button').style.display = 'none';
+				audio.play();
+				tocandoPausado = 1;
+			});
+			});
+				if(musicas[key+1] !== undefined){
+					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[key+1].title}`;
+				}else{
+					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[0].title}`;
+				}
 	 }
 /*END OF FUNCOES*/
