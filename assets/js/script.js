@@ -207,6 +207,15 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 			}
 		}
 	});
+	let trajectory = document.querySelector('.trajectory');
+	trajectory.addEventListener('click',(e)=>{
+		if(tocandoPausado == 1 || tocandoPausado == 2){
+			const width = trajectory.clientWidth;
+			const clickX = e.offsetX;
+			const duration = audio.duration;
+			audio.currentTime = (clickX / width) * duration;
+		}
+	});
 /*FUNCOES*/
 	 function nextSong(){
 	 	if(randomButton.querySelector('i').classList.contains('aleatorio')){
