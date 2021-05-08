@@ -19,6 +19,7 @@ let goBack = document.querySelector('.goBack-button');
 let repeatButton =document.querySelector('.repeat-button');
 let proximaFaixa = document.querySelector('.nextSong');
 let tocandoPausado = 0;
+let mainImage = document.querySelector('.audio-image');
 let velocidadeDesejada = 1.0;
 let key;
 let position;
@@ -40,6 +41,7 @@ musicas.map((item, index)=>{
 	musicaItem.querySelector('.audio-image-mini img').src = item.img;
 	songList.append(musicaItem);
 	musicaItem.querySelector('.song-list-item').addEventListener('click',()=>{
+		mainImage.querySelector('img').src = musicas[index].img;
 		document.querySelectorAll('.musica-conjunto').forEach((item)=>{
 			item.classList.remove('musicaTocando');
 			item.querySelector('.audio-pause-button').style.display = 'none';
@@ -280,6 +282,7 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 				tocandoPausado = 1;
 			});
 			});
+			mainImage.querySelector('img').src = musicas[position].img;
 	 	}else{
 	 		if(key >= (musicas.length-1)){
 	 			key = 0;
@@ -319,7 +322,7 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 				}else{
 					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[0].title}`;
 				}
-				
+				mainImage.querySelector('img').src = musicas[key].img;
 	 	}
 	 	audio.playbackRate = velocidadeDesejada;
 	 }
@@ -364,5 +367,6 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[0].title}`;
 				}
 				audio.playbackRate = velocidadeDesejada;
+				mainImage.querySelector('img').src = musicas[key].img;
 	 }
 /*END OF FUNCOES*/
