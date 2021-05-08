@@ -19,6 +19,7 @@ let goBack = document.querySelector('.goBack-button');
 let repeatButton =document.querySelector('.repeat-button');
 let proximaFaixa = document.querySelector('.nextSong');
 let tocandoPausado = 0;
+let velocidadeDesejada = 1.0;
 let key;
 let position;
 let keyMaisUmExiste = -1;
@@ -208,6 +209,32 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 		}
 	});
 	let trajectory = document.querySelector('.trajectory');
+	let volumeInner = document.querySelector('.volume-inner');
+	let volume = document.querySelector('.volume-progress');
+	volume.addEventListener('click',(e)=>{
+		if(tocandoPausado == 1 || tocandoPausado == 2){
+			const width = volume.clientWidth;
+			const clickX = e.offsetX;
+			const vol = 1;
+			audio.volume = (clickX / width) * vol;
+			let audioVol = audio.volume * 100;
+			volumeInner.style.width = `${audioVol}%`;
+		}
+	});
+	let number = document.querySelectorAll('.number');
+	number.forEach((item)=>{
+		item.addEventListener('click',()=>{
+			if(tocandoPausado == 1 || tocandoPausado == 2){
+				number.forEach((item)=>{
+					item.classList.remove('active');
+				});
+				item.classList.add('active');
+				velocidadeDesejada = item.getAttribute('data-key');
+				audio.playbackRate = velocidadeDesejada;
+				velocity.innerHTML = `${velocidadeDesejada}x`;
+			}
+		});
+	});
 	trajectory.addEventListener('click',(e)=>{
 		if(tocandoPausado == 1 || tocandoPausado == 2){
 			const width = trajectory.clientWidth;
@@ -215,6 +242,12 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 			const duration = audio.duration;
 			audio.currentTime = (clickX / width) * duration;
 		}
+	});
+	trajectory.addEventListener('touchmove',(e)=>{
+		alert('Em vez de arrastar, clique!');
+	});
+	volume.addEventListener('touchmove',(e)=>{
+		alert('Em vez de arrastar, clique!');
 	});
 /*FUNCOES*/
 	 function nextSong(){
@@ -288,6 +321,7 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 				}
 				
 	 	}
+	 	audio.playbackRate = velocidadeDesejada;
 	 }
 
  function prevSong(){
@@ -329,5 +363,6 @@ let trajectoryInner = document.querySelector('.trajectory-inner');
 				}else{
 					proximaFaixa.innerHTML = `<span>Próxima Faixa:</span> ${musicas[0].title}`;
 				}
+				audio.playbackRate = velocidadeDesejada;
 	 }
 /*END OF FUNCOES*/
